@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+{% block title %}Risk Analysis{% endblock %}
+{% block page_title %}Risk Analysis{% endblock %}
+{% block content %}
+
+<div class="alert alert-secondary small">
+  <i class="bi bi-shield-check"></i>
+  This page analyzes statistical risk patterns in your real portfolio and market data.
+  It explains conditions found -- it does not recommend buying or selling, and does not guarantee future outcomes.
+</div>
+
+<div class="row g-3 mb-3">
+  <!-- Concentration Risk -->
+  <div class="col-md-6">
+    <div class="card-panel h-100">
+      <h6><i class="bi bi-pie-chart"></i> Concentration Risk</h6>
+      <p class="small text-muted">Configured threshold: {{ concentration.threshold_percent }}%</p>
+      {% if concentration.breaches %}
+        {% for b in concentration.breaches %}
+        <div class="alert alert-warning small">{{ b.message }}</div>
+        {% endfor %}
+      {% else %}
+        <div class="alert alert-success small">No concentration threshold breaches detected.</div>
+      {% endif %}
+      <table class="table table-sm mt-2">
+        <thead><tr><th>Sector</th><th>Allocation %</th></tr></thead>
+        <tbody>
+        {% for row in concentration.by_sector %}
+          <tr class="{{ 'table-warning' if row.percent >= concentration.threshold_percent }}">
+            <td>{{ row.sector }}</td><td>{{ row.percent }}%</td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Drawdown -->
+  <div class="col-md-6">
+    <div class="card-panel h-100">
+      <h6><i class="bi bi-graph-down-arrow"></i> Drawdown</h6>
+      {% if drawdown.has_data %}
+        <div class="row text-center mb-2">
+          <div class="col-6 col-md-3">
+            <div class="small text-muted">Current</div>
+            <div class="fw-bold {{ 'text-loss' if drawdown.current_drawdown_percent < 0 }}">{{ drawdown.current_drawdown_percent }}%</div>
+          </div>
+          <div class="col-6 col-md-3">
+            <div class="small text-muted">Max</div>
+            <div class="fw-bold text-loss">{{ drawdown.max_drawdown_percent }}%</div>
+          </div>
+          <div class="col-6 col-md-3">
+            <div class="small text-muted">Peak</div>
+            <div class="fw-bold">₹{{ "{:,.0f}".format(drawdown.previous_peak) }}</div>
+          </div>
+          <div class="col-6 col-md-3">
+            <div class="small text-muted">Current Value</div>
+            <div class="fw-bold">₹{{ "{:,.0f}".format(drawdown.current_value) }}</div>
+          </div>
+        </div>
+        {% if drawdown.breach %}
+          <div class="alert alert-danger small">Drawdown has reached your monitoring threshold of {{ drawdown.alert_threshold_percent }}%.</div>
+        {% else %}
+          <div class="alert alert-success small">Drawdown is within your configured threshold of {{ drawdown.alert_threshold_percent }}%.</div>
+        {% endif %}
+        <canvas id="drawdownChart" height="140"></canvas>
+      {% else %}
+        <p class="text-muted small">No portfolio value history yet.</p>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<!-- Anomaly Detection -->
+<div class="card-panel">
+  <h6><i class="bi bi-activity"></i> Anomaly Detection (Isolation Forest)</h6>
+  <p class="small text-muted">Model contamination parameter: {{ anomaly.contamination }} &mdash; run against real historical daily returns for each symbol you hold.</p>
+
+  {% if anomaly.flagged %}
+    {% for f in anomaly.flagged %}
+      <div class="alert alert-warning small">{{ f.message }}</div>
+    {% endfor %}
+  {% else %}
+    <div class="alert alert-success small">No unusual price behavior currently flagged for your holdings.</div>
+  {% endif %}
+
+  <div class="row g-2">
+    {% for symbol, res in anomaly.results.items() %}
+    <div class="col-md-4">
+      <div class="border rounded p-2">
+        <div class="d-flex justify-content-between">
+          <strong>{{ symbol }}</strong>
+          {% if res.available %}
+            <span class="badge {{ 'bg-warning text-dark' if res.anomaly_count else 'bg-light text-muted border' }}">{{ res.anomaly_count }} flagged</span>
+          {% else %}
+            <span class="badge bg-light text-muted border">insufficient data</span>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+{% if drawdown.has_data %}
+<script>
+async function loadDrawdownChart() {
+  const res = await fetch("{{ url_for('risk.api_drawdown_series') }}");
+  const series = await res.json();
+  new Chart(document.getElementById('drawdownChart'), {
+    type: 'line',
+    data: { labels: series.map(p => p.date), datasets: [{ label: 'Drawdown %', data: series.map(p => p.drawdown_percent),
+      borderColor: '#d64545', backgroundColor: 'rgba(214,69,69,0.1)', fill: true, pointRadius: 0, tension: 0.15 }] },
+    options: { scales: { x: { ticks: { maxTicksLimit: 8 } }, y: { max: 5 } } }
+  });
+}
+loadDrawdownChart();
+</script>
+{% endif %}
+{% endblock %}

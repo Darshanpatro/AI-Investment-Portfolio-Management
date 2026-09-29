@@ -1,0 +1,30 @@
+Title: Stocks, Bonds, and ETFs
+
+A stock (also called equity or a share) represents partial ownership in a
+company. When an investor buys a stock, they become a shareholder and are
+entitled to a proportional share of the company's profits (often paid as
+dividends) and, in principle, voting rights on major corporate decisions.
+Stock prices fluctuate based on company performance, investor sentiment,
+and broader market and economic conditions. Stocks are generally
+considered higher risk and higher potential return compared to bonds.
+
+A bond is a debt instrument. When an investor buys a bond, they are
+effectively lending money to the issuer (a government or a corporation) in
+exchange for periodic interest payments and the return of the principal
+amount at maturity. Bonds are generally considered lower risk than stocks,
+though they still carry risks such as interest rate risk (bond prices
+generally fall when interest rates rise) and credit/default risk (the
+issuer failing to repay).
+
+An Exchange Traded Fund (ETF) is a pooled investment vehicle that holds a
+basket of underlying assets, such as stocks, bonds, or commodities, and
+trades on a stock exchange like an individual stock. ETFs are widely used
+by investors seeking instant diversification, since a single ETF purchase
+can provide exposure to dozens or hundreds of underlying securities. Many
+ETFs track a specific index, such as a broad market index or a particular
+sector, and typically have lower expense ratios than actively managed
+mutual funds.
+
+Choosing among stocks, bonds, and ETFs (or some mix of all three) is a
+central part of asset allocation and depends heavily on an investor's risk
+tolerance, investment horizon, and financial goals.

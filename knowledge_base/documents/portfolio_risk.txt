@@ -1,0 +1,32 @@
+Title: Portfolio Risk
+
+Portfolio risk refers to the possibility that the actual return on an
+investment portfolio will differ from its expected return, including the
+possibility of losing some or all of the invested capital. Risk in a
+portfolio context is usually discussed in terms of several distinct types.
+
+Concentration risk arises when a large portion of a portfolio is invested
+in a single asset, sector, or asset type. If that concentrated position
+performs poorly, it can have an outsized negative effect on the entire
+portfolio. A commonly used rule of thumb is to flag concentration when a
+single sector or asset exceeds a configured percentage of total portfolio
+value, though the exact "safe" threshold varies depending on the investor's
+risk tolerance and is not a universal fixed number.
+
+Market risk (or systematic risk) is the risk that affects the overall
+market or a large segment of it, driven by factors such as interest rate
+changes, inflation, geopolitical events, or recessions. Diversification
+cannot fully protect against market risk.
+
+Liquidity risk is the risk that an investor will not be able to buy or sell
+an asset quickly enough, at a fair price, when needed.
+
+Risk is often measured using statistical tools such as standard deviation
+(volatility) of returns, drawdown from a portfolio's peak value, and
+anomaly detection on price movement patterns to flag unusual behavior that
+may indicate elevated risk.
+
+Understanding portfolio risk is important not because it predicts future
+prices with certainty, but because it helps investors understand what
+could happen under adverse conditions and make more informed decisions
+about position sizing and diversification.

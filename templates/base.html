@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}AI Portfolio Manager{% endblock %}</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+<link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+</head>
+<body>
+{% if current_user.is_authenticated %}
+<div class="app-shell">
+  <nav class="sidebar">
+    <div class="sidebar-brand">
+      <i class="bi bi-graph-up-arrow"></i>
+      <span>AI Portfolio</span>
+    </div>
+    <ul class="nav flex-column sidebar-nav">
+      <li class="nav-item"><a class="nav-link {{ 'active' if request.endpoint == 'portfolio.dashboard' }}" href="{{ url_for('portfolio.dashboard') }}"><i class="bi bi-speedometer2"></i> Dashboard</a></li>
+      <li class="nav-item"><a class="nav-link {{ 'active' if request.endpoint == 'portfolio.portfolio_page' }}" href="{{ url_for('portfolio.portfolio_page') }}"><i class="bi bi-briefcase"></i> Portfolio</a></li>
+      <li class="nav-item"><a class="nav-link {{ 'active' if request.endpoint == 'portfolio.holdings_page' }}" href="{{ url_for('portfolio.holdings_page') }}"><i class="bi bi-collection"></i> Holdings</a></li>
+      <li class="nav-item"><a class="nav-link {{ 'active' if request.endpoint == 'analytics.performance_page' }}" href="{{ url_for('analytics.performance_page') }}"><i class="bi bi-bar-chart-line"></i> Performance</a></li>
+      <li class="nav-item"><a class="nav-link {{ 'active' if request.endpoint == 'risk.risk_page' }}" href="{{ url_for('risk.risk_page') }}"><i class="bi bi-shield-exclamation"></i> Risk Analysis</a></li>
+      <li class="nav-item"><a class="nav-link {{ 'active' if request.endpoint == 'alerts.alerts_page' }}" href="{{ url_for('alerts.alerts_page') }}"><i class="bi bi-bell"></i> Alerts</a></li>
+      <li class="nav-item"><a class="nav-link {{ 'active' if request.endpoint == 'portfolio.transactions_page' }}" href="{{ url_for('portfolio.transactions_page') }}"><i class="bi bi-arrow-left-right"></i> Transactions</a></li>
+      <li class="nav-item"><a class="nav-link {{ 'active' if request.endpoint == 'ai.assistant_page' }}" href="{{ url_for('ai.assistant_page') }}"><i class="bi bi-robot"></i> AI Assistant</a></li>
+      <li class="nav-item"><a class="nav-link {{ 'active' if request.endpoint == 'knowledge.knowledge_page' }}" href="{{ url_for('knowledge.knowledge_page') }}"><i class="bi bi-journal-bookmark"></i> Knowledge Base</a></li>
+      <li class="nav-item"><a class="nav-link {{ 'active' if request.endpoint == 'portfolio.settings_page' }}" href="{{ url_for('portfolio.settings_page') }}"><i class="bi bi-gear"></i> Settings</a></li>
+      <li class="nav-item mt-4"><a class="nav-link text-danger" href="{{ url_for('auth.logout') }}"><i class="bi bi-box-arrow-right"></i> Logout</a></li>
+    </ul>
+    <div class="sidebar-user">
+      <i class="bi bi-person-circle"></i>
+      <span>{{ current_user.name }}</span>
+    </div>
+  </nav>
+
+  <main class="main-content">
+    <div class="topbar d-flex justify-content-between align-items-center">
+      <h5 class="mb-0">{% block page_title %}Dashboard{% endblock %}</h5>
+      <span class="disclaimer-pill" title="Educational use only">
+        <i class="bi bi-info-circle"></i> Educational tool - not financial advice
+      </span>
+    </div>
+
+    <div class="content-body">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}
+            <div class="alert alert-{{ category if category != 'message' else 'info' }} alert-dismissible fade show" role="alert">
+              {{ message }}
+              <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+
+      {% block content %}{% endblock %}
+    </div>
+  </main>
+</div>
+{% else %}
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="container mt-3">
+      {% for category, message in messages %}
+        <div class="alert alert-{{ category if category != 'message' else 'info' }} alert-dismissible fade show" role="alert">
+          {{ message }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+      {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+  {% block auth_content %}{% endblock %}
+{% endif %}
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

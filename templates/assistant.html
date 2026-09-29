@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% block title %}AI Assistant{% endblock %}
+{% block page_title %}AI Assistant{% endblock %}
+{% block content %}
+
+<div class="alert alert-secondary small">
+  <i class="bi bi-info-circle"></i>
+  This assistant explains your real portfolio data and general financial concepts.
+  It does not provide personalized financial advice and does not guarantee returns.
+</div>
+
+<div class="card-panel">
+  <div class="chat-window" id="chatWindow">
+    {% for h in history|reverse %}
+      <div class="route-tag">You</div>
+      <div class="chat-bubble-user">{{ h.question }}</div>
+      <div class="route-tag">Assistant &middot; route: {{ h.route_used }}</div>
+      <div class="chat-bubble-ai">{{ h.answer }}</div>
+    {% endfor %}
+    {% if not history %}
+      <p class="text-muted text-center mt-5">Ask something like "What is my total investment?" or "What is diversification?"</p>
+    {% endif %}
+  </div>
+
+  <form id="askForm" class="d-flex gap-2 mt-3">
+    <input type="text" id="questionInput" class="form-control" placeholder="Ask about your portfolio or a financial concept..." maxlength="500" required>
+    <button class="btn btn-primary" type="submit"><i class="bi bi-send"></i> Ask</button>
+  </form>
+
+  <div class="mt-2 d-flex flex-wrap gap-1">
+    {% for q in ["What is my total investment?", "Which asset has the highest profit?", "How many holdings do I have?", "What is my portfolio return?", "What is diversification?", "What is drawdown?"] %}
+      <button type="button" class="btn btn-sm btn-outline-secondary sample-q">{{ q }}</button>
+    {% endfor %}
+  </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+const chatWindow = document.getElementById('chatWindow');
+const askForm = document.getElementById('askForm');
+const questionInput = document.getElementById('questionInput');
+
+document.querySelectorAll('.sample-q').forEach(btn => {
+  btn.addEventListener('click', () => { questionInput.value = btn.textContent; askForm.dispatchEvent(new Event('submit')); });
+});
+
+askForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const question = questionInput.value.trim();
+  if (!question) return;
+
+  appendBubble('You', question, 'chat-bubble-user');
+  questionInput.value = '';
+  questionInput.disabled = true;
+
+  const thinkingId = 'thinking-' + Date.now();
+  chatWindow.insertAdjacentHTML('beforeend', `<div id="${thinkingId}" class="chat-bubble-ai text-muted"><em>Thinking...</em></div>`);
+  chatWindow.scrollTop = chatWindow.scrollHeight;
+
+  try {
+    const res = await fetch("{{ url_for('ai.api_ask') }}", {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ question })
+    });
+    const data = await res.json();
+    document.getElementById(thinkingId).remove();
+
+    if (!res.ok) {
+      appendBubble('Assistant', data.error || 'Something went wrong.', 'chat-bubble-ai');
+    } else {
+      appendBubble(`Assistant · route: ${data.route}`, data.answer, 'chat-bubble-ai');
+    }
+  } catch (err) {
+    document.getElementById(thinkingId).remove();
+    appendBubble('Assistant', 'Network error -- please try again.', 'chat-bubble-ai');
+  }
+  questionInput.disabled = false;
+  questionInput.focus();
+});
+
+function appendBubble(label, text, cssClass) {
+  chatWindow.insertAdjacentHTML('beforeend', `<div class="route-tag">${label}</div><div class="${cssClass}"></div>`);
+  chatWindow.lastElementChild.textContent = text;
+  chatWindow.scrollTop = chatWindow.scrollHeight;
+}
+chatWindow.scrollTop = chatWindow.scrollHeight;
+</script>
+{% endblock %}

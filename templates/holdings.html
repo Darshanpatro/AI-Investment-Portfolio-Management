@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+{% block title %}Holdings{% endblock %}
+{% block page_title %}Holdings{% endblock %}
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h6 class="mb-0 text-muted">Manage your investment holdings</h6>
+  <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addHoldingModal">
+    <i class="bi bi-plus-lg"></i> Add Holding
+  </button>
+</div>
+
+<div class="card-panel">
+{% if holdings %}
+<div class="table-responsive">
+<table class="table align-middle">
+  <thead>
+    <tr><th>Symbol</th><th>Name</th><th>Type</th><th>Sector</th><th>Qty</th><th>Buy Price</th><th>Purchase Date</th><th></th></tr>
+  </thead>
+  <tbody>
+  {% for h in holdings %}
+    <tr>
+      <td><strong>{{ h.symbol }}</strong></td>
+      <td>{{ h.asset_name }}</td>
+      <td>{{ h.asset_type }}</td>
+      <td>{{ h.sector }}</td>
+      <td>{{ h.quantity }}</td>
+      <td>₹{{ h.buy_price }}</td>
+      <td>{{ h.purchase_date }}</td>
+      <td class="text-end">
+        <button class="btn btn-sm btn-outline-secondary" onclick="openEditModal({{ h.id }})"><i class="bi bi-pencil"></i></button>
+        <form method="POST" action="{{ url_for('portfolio.delete_holding', holding_id=h.id) }}" class="d-inline" onsubmit="return confirm('Delete this holding? This cannot be undone.');">
+          <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+        </form>
+      </td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
+{% else %}
+<div class="text-center py-5">
+  <i class="bi bi-inboxes" style="font-size:2.5rem;color:#c8d0e0;"></i>
+  <p class="mt-3 text-muted">No holdings yet. Click "Add Holding" to get started.</p>
+</div>
+{% endif %}
+</div>
+
+<!-- Add Holding Modal -->
+<div class="modal fade" id="addHoldingModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form method="POST" action="{{ url_for('portfolio.add_holding') }}">
+        <div class="modal-header"><h5 class="modal-title">Add Holding</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+        <div class="modal-body">
+          {% include "_holding_form_fields.html" %}
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-primary">Add Holding</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Edit Holding Modal -->
+<div class="modal fade" id="editHoldingModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form method="POST" id="editHoldingForm">
+        <div class="modal-header"><h5 class="modal-title">Edit Holding</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+        <div class="modal-body" id="editHoldingFormBody">
+          <!-- filled dynamically from real data via /holdings/<id>/json -->
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+async function openEditModal(holdingId) {
+  const res = await fetch(`/holdings/${holdingId}/json`);
+  if (!res.ok) { alert('Could not load holding data.'); return; }
+  const h = await res.json();
+
+  document.getElementById('editHoldingForm').action = `/holdings/${holdingId}/edit`;
+  document.getElementById('editHoldingFormBody').innerHTML = `
+    <div class="mb-2"><label class="form-label">Symbol</label>
+      <input type="text" name="symbol" class="form-control" value="${h.symbol}" required></div>
+    <div class="mb-2"><label class="form-label">Asset Name</label>
+      <input type="text" name="asset_name" class="form-control" value="${h.asset_name}" required></div>
+    <div class="mb-2"><label class="form-label">Asset Type</label>
+      <select name="asset_type" class="form-select">
+        ${['Stock','ETF','Bond','Mutual Fund','Crypto'].map(t => `<option ${t===h.asset_type?'selected':''}>${t}</option>`).join('')}
+      </select></div>
+    <div class="mb-2"><label class="form-label">Sector</label>
+      <input type="text" name="sector" class="form-control" value="${h.sector || ''}"></div>
+    <div class="mb-2"><label class="form-label">Quantity</label>
+      <input type="number" step="any" name="quantity" class="form-control" value="${h.quantity}" required></div>
+    <div class="mb-2"><label class="form-label">Buy Price (₹)</label>
+      <input type="number" step="any" name="buy_price" class="form-control" value="${h.buy_price}" required></div>
+    <div class="mb-2"><label class="form-label">Purchase Date</label>
+      <input type="date" name="purchase_date" class="form-control" value="${h.purchase_date}" required></div>
+  `;
+
+  new bootstrap.Modal(document.getElementById('editHoldingModal')).show();
+}
+</script>
+{% endblock %}

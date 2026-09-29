@@ -1,0 +1,26 @@
+Title: Volatility
+
+Volatility is a statistical measure of the dispersion of returns for a
+given asset or portfolio over a period of time. In practical terms, it
+describes how much and how quickly the price of an investment moves up and
+down. A highly volatile asset experiences large price swings in short
+periods, while a low-volatility asset tends to have more stable, gradual
+price changes.
+
+Volatility is most commonly measured using the standard deviation of an
+asset's returns. A higher standard deviation indicates that returns are
+spread out over a wider range, implying greater unpredictability.
+
+Volatility is not the same thing as risk, though the two are related.
+Volatility describes the magnitude of price fluctuations, while risk more
+broadly refers to the possibility of a permanent or significant loss.
+Some investors view short-term volatility as an opportunity rather than a
+danger, especially if they have a long time horizon and do not need to
+sell during a downturn.
+
+Sudden, unusual spikes in volatility compared to an asset's historical
+pattern can sometimes be detected using anomaly detection techniques, such
+as Isolation Forest, applied to daily returns. Such spikes do not, by
+themselves, indicate the direction prices will move next; they simply
+flag that recent behavior differs meaningfully from the historical norm
+and may warrant closer attention.

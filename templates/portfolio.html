@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}Portfolio{% endblock %}
+{% block page_title %}Portfolio Overview{% endblock %}
+{% block content %}
+
+<div class="row g-3 mb-3">
+  <div class="col-md-3"><div class="metric-card"><div class="metric-label">Total Investment</div><div class="metric-value">₹{{ "{:,.2f}".format(summary.total_investment) }}</div></div></div>
+  <div class="col-md-3"><div class="metric-card"><div class="metric-label">Current Value</div><div class="metric-value">₹{{ "{:,.2f}".format(summary.total_current_value) }}</div></div></div>
+  <div class="col-md-3"><div class="metric-card"><div class="metric-label">Profit / Loss</div><div class="metric-value {{ 'text-profit' if summary.total_profit_loss >= 0 else 'text-loss' }}">₹{{ "{:,.2f}".format(summary.total_profit_loss) }}</div></div></div>
+  <div class="col-md-3"><div class="metric-card"><div class="metric-label">Return</div><div class="metric-value {{ 'text-profit' if summary.total_return_percent >= 0 else 'text-loss' }}">{{ summary.total_return_percent }}%</div></div></div>
+</div>
+
+<div class="card-panel">
+  <h6 class="mb-3">Holding-Level Detail</h6>
+  {% if summary.holdings %}
+  <div class="table-responsive">
+  <table class="table table-sm align-middle">
+    <thead><tr><th>Symbol</th><th>Name</th><th>Type</th><th>Sector</th><th>Qty</th><th>Buy Price</th><th>Current Price</th><th>Investment</th><th>Current Value</th><th>P/L</th><th>Return</th></tr></thead>
+    <tbody>
+    {% for h in summary.holdings %}
+      <tr>
+        <td><strong>{{ h.symbol }}</strong></td>
+        <td>{{ h.asset_name }}</td>
+        <td>{{ h.asset_type }}</td>
+        <td>{{ h.sector }}</td>
+        <td>{{ h.quantity }}</td>
+        <td>₹{{ h.buy_price }}</td>
+        <td>{{ '₹' ~ h.current_price if h.current_price is not none else 'N/A' }}
+          {% if h.price_source == 'historical' %}<span class="badge bg-light text-muted border">historical</span>{% endif %}
+        </td>
+        <td>₹{{ "{:,.2f}".format(h.investment_value) }}</td>
+        <td>{{ '₹{:,.2f}'.format(h.current_value) if h.current_value is not none else 'N/A' }}</td>
+        <td class="{{ 'text-profit' if h.profit_loss and h.profit_loss >= 0 else 'text-loss' }}">{{ '₹{:,.2f}'.format(h.profit_loss) if h.profit_loss is not none else 'N/A' }}</td>
+        <td class="{{ 'text-profit' if h.return_percent and h.return_percent >= 0 else 'text-loss' }}">{{ (h.return_percent ~ '%') if h.return_percent is not none else 'N/A' }}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  </div>
+  {% else %}
+  <p class="text-muted">No holdings yet. <a href="{{ url_for('portfolio.holdings_page') }}">Add one</a> to see calculations here.</p>
+  {% endif %}
+</div>
+{% endblock %}

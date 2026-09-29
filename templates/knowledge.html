@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% block title %}Knowledge Base{% endblock %}
+{% block page_title %}Knowledge Base{% endblock %}
+{% block content %}
+
+<div class="row g-3 mb-3">
+  <div class="col-md-4"><div class="metric-card"><div class="metric-label">Documents Indexed</div><div class="metric-value">{{ documents|length }}</div></div></div>
+  <div class="col-md-4"><div class="metric-card"><div class="metric-label">Total Chunks</div><div class="metric-value">{{ total_chunks }}</div></div></div>
+  <div class="col-md-4">
+    <div class="metric-card d-flex flex-column justify-content-center">
+      <form method="POST" action="{{ url_for('knowledge.reindex_knowledge') }}" onsubmit="return false;" id="reindexForm">
+        <button class="btn btn-outline-primary btn-sm" id="reindexBtn"><i class="bi bi-arrow-repeat"></i> Re-index Documents</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="row g-3">
+  <div class="col-md-5">
+    <div class="card-panel">
+      <h6>Documents</h6>
+      <ul class="list-group list-group-flush">
+      {% for d in documents %}
+        <li class="list-group-item d-flex justify-content-between">
+          <span>{{ d.title }}</span>
+          <span class="badge bg-light text-muted border">{{ d.chunk_count }} chunks</span>
+        </li>
+      {% endfor %}
+      </ul>
+    </div>
+  </div>
+
+  <div class="col-md-7">
+    <div class="card-panel">
+      <h6>Ask the Knowledge Base</h6>
+      <form id="kbForm" class="d-flex gap-2 mb-3">
+        <input type="text" id="kbInput" class="form-control" placeholder="e.g. What is diversification?" required>
+        <button class="btn btn-primary" type="submit">Search</button>
+      </form>
+      <div id="kbResult"></div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.getElementById('reindexForm').addEventListener('submit', async () => {
+  const btn = document.getElementById('reindexBtn');
+  btn.disabled = true; btn.textContent = 'Re-indexing...';
+  await fetch("{{ url_for('knowledge.reindex_knowledge') }}", { method: 'POST' });
+  location.reload();
+});
+
+document.getElementById('kbForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const query = document.getElementById('kbInput').value.trim();
+  if (!query) return;
+  const resultDiv = document.getElementById('kbResult');
+  resultDiv.innerHTML = '<p class="text-muted">Searching...</p>';
+
+  const res = await fetch("{{ url_for('knowledge.api_knowledge_search') }}", {
+    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ query })
+  });
+  const data = await res.json();
+
+  if (!res.ok) { resultDiv.innerHTML = `<p class="text-danger">${data.error}</p>`; return; }
+
+  let chunksHtml = data.chunks.map(c => `
+    <div class="border rounded p-2 mb-2">
+      <div class="d-flex justify-content-between">
+        <strong>${c.title}</strong>
+        <span class="badge bg-light text-muted border">similarity: ${c.similarity}</span>
+      </div>
+      <div class="small text-muted mt-1">${c.text}</div>
+    </div>
+  `).join('');
+
+  resultDiv.innerHTML = `
+    <div class="alert alert-light border">
+      <span class="badge source-badge bg-secondary">${data.source}</span>
+      <p class="mt-2 mb-0">${data.answer}</p>
+    </div>
+    <h6 class="mt-3">Retrieved Chunks</h6>
+    ${chunksHtml || '<p class="text-muted small">No matching chunks.</p>'}
+  `;
+});
+</script>
+{% endblock %}

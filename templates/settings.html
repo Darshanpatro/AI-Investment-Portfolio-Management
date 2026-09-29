@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Settings{% endblock %}
+{% block page_title %}Settings{% endblock %}
+{% block content %}
+
+<div class="card-panel mb-3">
+  <h6>Account</h6>
+  <p class="mb-1"><strong>Name:</strong> {{ current_user.name }}</p>
+  <p class="mb-1"><strong>Email:</strong> {{ current_user.email }}</p>
+  <p class="mb-0"><strong>Member since:</strong> {{ current_user.created_at.strftime('%d %b %Y') }}</p>
+</div>
+
+<div class="card-panel">
+  <h6>About This System</h6>
+  <p class="small text-muted">
+    This system is intended for educational portfolio analysis and risk monitoring.
+    It does not guarantee investment returns and does not constitute personalized
+    financial advice. Market pricing is based on bundled historical/sample data
+    unless a live market-data API is configured by the administrator.
+  </p>
+  <p class="small text-muted mb-0">
+    Risk thresholds (concentration, drawdown) and the anomaly-detection sensitivity
+    are configured via environment variables by the project administrator, not
+    hard-coded in the application logic.
+  </p>
+</div>
+
+{% endblock %}

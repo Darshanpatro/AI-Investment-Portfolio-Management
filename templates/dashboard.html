@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+{% block content %}
+
+<div class="row g-3 mb-3">
+  <div class="col-md-3">
+    <div class="metric-card">
+      <div class="metric-label">Total Investment</div>
+      <div class="metric-value">₹{{ "{:,.2f}".format(summary.total_investment) }}</div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="metric-card">
+      <div class="metric-label">Current Value</div>
+      <div class="metric-value">₹{{ "{:,.2f}".format(summary.total_current_value) }}</div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="metric-card">
+      <div class="metric-label">Total Profit / Loss</div>
+      <div class="metric-value {{ 'text-profit' if summary.total_profit_loss >= 0 else 'text-loss' }}">
+        {{ '+' if summary.total_profit_loss >= 0 else '' }}₹{{ "{:,.2f}".format(summary.total_profit_loss) }}
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="metric-card">
+      <div class="metric-label">Total Return</div>
+      <div class="metric-value {{ 'text-profit' if summary.total_return_percent >= 0 else 'text-loss' }}">
+        {{ '+' if summary.total_return_percent >= 0 else '' }}{{ summary.total_return_percent }}%
+      </div>
+    </div>
+  </div>
+</div>
+
+{% if summary.num_holdings == 0 %}
+<div class="card-panel text-center py-5">
+  <i class="bi bi-inboxes" style="font-size:2.5rem;color:#c8d0e0;"></i>
+  <h5 class="mt-3">No holdings yet</h5>
+  <p class="text-muted">Add your first holding to see real portfolio data here.</p>
+  <a href="{{ url_for('portfolio.holdings_page') }}" class="btn btn-primary">Add Holding</a>
+</div>
+{% else %}
+
+<div class="row g-3 mb-3">
+  <div class="col-md-4">
+    <div class="card-panel">
+      <h6 class="mb-3">Asset Allocation</h6>
+      <canvas id="allocationChart" height="220"></canvas>
+    </div>
+  </div>
+  <div class="col-md-8">
+    <div class="card-panel">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <h6 class="mb-0">Portfolio Value Over Time</h6>
+        <span class="text-muted small">Based on historical market data</span>
+      </div>
+      <canvas id="performanceChart" height="220"></canvas>
+    </div>
+  </div>
+</div>
+
+<div class="row g-3">
+  <div class="col-md-7">
+    <div class="card-panel">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <h6 class="mb-0">Holdings ({{ summary.num_holdings }})</h6>
+        <a href="{{ url_for('portfolio.holdings_page') }}" class="small">Manage &rarr;</a>
+      </div>
+      <div class="table-responsive">
+      <table class="table table-sm align-middle">
+        <thead><tr><th>Symbol</th><th>Qty</th><th>Current Value</th><th>P/L</th><th>Return</th></tr></thead>
+        <tbody>
+          {% for h in summary.holdings %}
+          <tr>
+            <td><strong>{{ h.symbol }}</strong></td>
+            <td>{{ h.quantity }}</td>
+            <td>{{ '₹{:,.2f}'.format(h.current_value) if h.current_value is not none else 'N/A' }}</td>
+            <td class="{{ 'text-profit' if h.profit_loss and h.profit_loss >= 0 else 'text-loss' }}">
+              {{ '₹{:,.2f}'.format(h.profit_loss) if h.profit_loss is not none else 'N/A' }}
+            </td>
+            <td class="{{ 'text-profit' if h.return_percent and h.return_percent >= 0 else 'text-loss' }}">
+              {{ (h.return_percent ~ '%') if h.return_percent is not none else 'N/A' }}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-5">
+    <div class="card-panel mb-3">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <h6 class="mb-0"><i class="bi bi-bell"></i> Recent Alerts</h6>
+        <a href="{{ url_for('alerts.alerts_page') }}" class="small">View all &rarr;</a>
+      </div>
+      {% if recent_alerts %}
+        {% for a in recent_alerts %}
+        <div class="d-flex justify-content-between border-bottom py-2">
+          <div>
+            <span class="badge badge-severity-{{ a.severity }}">{{ a.severity }}</span>
+            <div class="small mt-1">{{ a.title }}</div>
+          </div>
+          <span class="text-muted small">{{ a.created_at.strftime('%d %b') }}</span>
+        </div>
+        {% endfor %}
+      {% else %}
+        <p class="text-muted small mb-0">No alerts yet.</p>
+      {% endif %}
+    </div>
+
+    <div class="card-panel">
+      <h6><i class="bi bi-robot"></i> AI Assistant</h6>
+      <p class="small text-muted">Ask questions about your portfolio or financial concepts.</p>
+      <a href="{{ url_for('ai.assistant_page') }}" class="btn btn-outline-primary btn-sm">Open Assistant</a>
+    </div>
+  </div>
+</div>
+{% endif %}
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+async function loadDashboardCharts() {
+  const allocRes = await fetch("{{ url_for('analytics.api_allocation') }}");
+  const alloc = await allocRes.json();
+  if (alloc.by_asset && alloc.by_asset.length) {
+    new Chart(document.getElementById('allocationChart'), {
+      type: 'doughnut',
+      data: {
+        labels: alloc.by_asset.map(a => a.symbol),
+        datasets: [{ data: alloc.by_asset.map(a => a.percent),
+          backgroundColor: ['#2f7ee6','#1b9e6b','#d68f1f','#d64545','#7a5cff','#12b3b3','#e07ac7','#8c9bb3'] }]
+      },
+      options: { plugins: { legend: { position: 'bottom' } } }
+    });
+  }
+
+  const seriesRes = await fetch("{{ url_for('analytics.api_value_series') }}");
+  const series = await seriesRes.json();
+  if (series.length) {
+    new Chart(document.getElementById('performanceChart'), {
+      type: 'line',
+      data: {
+        labels: series.map(p => p.date),
+        datasets: [{ label: 'Portfolio Value (₹)', data: series.map(p => p.value),
+          borderColor: '#2f7ee6', backgroundColor: 'rgba(47,126,230,0.08)', fill: true, tension: 0.2, pointRadius: 0 }]
+      },
+      options: { scales: { x: { ticks: { maxTicksLimit: 8 } } } }
+    });
+  }
+}
+{% if summary.num_holdings > 0 %}loadDashboardCharts();{% endif %}
+</script>
+{% endblock %}

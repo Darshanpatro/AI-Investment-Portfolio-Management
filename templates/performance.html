@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% block title %}Performance{% endblock %}
+{% block page_title %}Performance Analysis{% endblock %}
+{% block content %}
+
+{% if summary.num_holdings == 0 %}
+<div class="card-panel text-center py-5">
+  <p class="text-muted mb-0">Add holdings to see performance charts based on real historical data.</p>
+</div>
+{% else %}
+
+<div class="card-panel mb-3">
+  <h6 class="mb-2">Portfolio Value Over Time</h6>
+  <canvas id="valueChart" height="90"></canvas>
+</div>
+
+<div class="row g-3">
+  <div class="col-md-6">
+    <div class="card-panel">
+      <h6 class="mb-2">Investment vs Current Value by Asset</h6>
+      <canvas id="investVsCurrentChart"></canvas>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="card-panel">
+      <h6 class="mb-2">Return % by Asset</h6>
+      <canvas id="returnByAssetChart"></canvas>
+    </div>
+  </div>
+</div>
+
+<div class="card-panel mt-3">
+  <h6 class="mb-2">Profit / Loss by Asset</h6>
+  <canvas id="plByAssetChart" height="100"></canvas>
+</div>
+
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+{% if summary.num_holdings > 0 %}
+<script>
+async function loadPerformanceCharts() {
+  const seriesRes = await fetch("{{ url_for('analytics.api_value_series') }}");
+  const series = await seriesRes.json();
+  new Chart(document.getElementById('valueChart'), {
+    type: 'line',
+    data: { labels: series.map(p => p.date),
+      datasets: [{ label: 'Portfolio Value (₹)', data: series.map(p => p.value),
+        borderColor: '#2f7ee6', backgroundColor: 'rgba(47,126,230,0.08)', fill: true, tension: 0.2, pointRadius: 0 }] },
+    options: { scales: { x: { ticks: { maxTicksLimit: 10 } } } }
+  });
+
+  const byAssetRes = await fetch("{{ url_for('analytics.api_performance_by_asset') }}");
+  const holdings = (await byAssetRes.json()).filter(h => h.current_value !== null);
+  const symbols = holdings.map(h => h.symbol);
+
+  new Chart(document.getElementById('investVsCurrentChart'), {
+    type: 'bar',
+    data: { labels: symbols, datasets: [
+      { label: 'Investment', data: holdings.map(h => h.investment_value), backgroundColor: '#8c9bb3' },
+      { label: 'Current Value', data: holdings.map(h => h.current_value), backgroundColor: '#2f7ee6' }
+    ] },
+    options: { responsive: true }
+  });
+
+  new Chart(document.getElementById('returnByAssetChart'), {
+    type: 'bar',
+    data: { labels: symbols, datasets: [{ label: 'Return %', data: holdings.map(h => h.return_percent),
+      backgroundColor: holdings.map(h => h.return_percent >= 0 ? '#1b9e6b' : '#d64545') }] },
+  });
+
+  new Chart(document.getElementById('plByAssetChart'), {
+    type: 'bar',
+    data: { labels: symbols, datasets: [{ label: 'Profit / Loss (₹)', data: holdings.map(h => h.profit_loss),
+      backgroundColor: holdings.map(h => h.profit_loss >= 0 ? '#1b9e6b' : '#d64545') }] },
+    options: { indexAxis: 'y' }
+  });
+}
+loadPerformanceCharts();
+</script>
+{% endif %}
+{% endblock %}

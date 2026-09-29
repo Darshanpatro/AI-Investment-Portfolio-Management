@@ -1,0 +1,35 @@
+<div class="mb-2">
+  <label class="form-label">Symbol</label>
+  <input type="text" name="symbol" class="form-control" placeholder="e.g. TCS" required>
+  <div class="form-text">Must match a symbol available in market data for pricing (e.g. TCS, INFY, HDFCBANK, RELIANCE, NIFTYBEES, GOLDBEES, SBIN, TATAMOTORS).</div>
+</div>
+<div class="mb-2">
+  <label class="form-label">Asset Name</label>
+  <input type="text" name="asset_name" class="form-control" placeholder="e.g. Tata Consultancy Services" required>
+</div>
+<div class="mb-2">
+  <label class="form-label">Asset Type</label>
+  <select name="asset_type" class="form-select">
+    <option>Stock</option>
+    <option>ETF</option>
+    <option>Bond</option>
+    <option>Mutual Fund</option>
+    <option>Crypto</option>
+  </select>
+</div>
+<div class="mb-2">
+  <label class="form-label">Sector</label>
+  <input type="text" name="sector" class="form-control" placeholder="e.g. Technology">
+</div>
+<div class="mb-2">
+  <label class="form-label">Quantity</label>
+  <input type="number" step="any" min="0.0001" name="quantity" class="form-control" required>
+</div>
+<div class="mb-2">
+  <label class="form-label">Buy Price (₹)</label>
+  <input type="number" step="any" min="0.01" name="buy_price" class="form-control" required>
+</div>
+<div class="mb-2">
+  <label class="form-label">Purchase Date</label>
+  <input type="date" name="purchase_date" class="form-control" required>
+</div>

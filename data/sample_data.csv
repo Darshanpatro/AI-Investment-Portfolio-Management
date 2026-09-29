@@ -1,0 +1,7 @@
+symbol,asset_name,asset_type,sector,quantity,buy_price,purchase_date
+TCS,Tata Consultancy Services,Stock,Technology,10,3550.00,2024-06-10
+INFY,Infosys Ltd,Stock,Technology,15,1420.00,2024-08-05
+HDFCBANK,HDFC Bank Ltd,Stock,Banking,20,1550.00,2024-05-20
+RELIANCE,Reliance Industries,Stock,Energy,8,2750.00,2024-09-15
+NIFTYBEES,Nippon India ETF Nifty BeES,ETF,Diversified,50,230.00,2024-04-01
+GOLDBEES,Nippon India ETF Gold BeES,ETF,Commodity,100,55.00,2024-07-12

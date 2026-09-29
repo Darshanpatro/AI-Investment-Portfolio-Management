@@ -1,0 +1,27 @@
+Title: Drawdown
+
+Drawdown is a measure of the decline in the value of a portfolio or asset
+from a previous peak (its highest recorded value) to a subsequent trough
+(a lower value), expressed as a percentage. It is one of the most widely
+used measures of downside risk because it captures the real, experienced
+loss an investor would have seen if they had bought at the peak.
+
+The formula for drawdown at any given point in time is:
+Drawdown = (Current Value - Previous Peak Value) / Previous Peak Value x 100
+
+Because the current value is typically lower than the peak when a drawdown
+is occurring, this value is usually negative or zero. A drawdown of 0%
+means the portfolio is currently at its all-time high.
+
+Maximum drawdown refers to the largest peak-to-trough decline observed
+over a specified period. It is often used as a way to understand the
+worst-case historical loss an investor would have experienced, and is
+commonly used alongside average returns to judge whether a strategy's
+returns are worth its historical risk.
+
+Drawdowns are a normal part of investing; nearly all portfolios experience
+some drawdown over time, even ones with strong long-term returns. What
+matters to most investors is the magnitude and duration of drawdowns
+relative to their own risk tolerance and time horizon, since a large
+drawdown that takes years to recover from can be much more difficult to
+endure than a shallow, short-lived one.

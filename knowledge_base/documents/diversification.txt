@@ -1,0 +1,31 @@
+Title: Diversification
+
+Diversification is an investment strategy that involves spreading capital
+across multiple assets, asset classes, sectors, or geographies so that the
+performance of any single investment has a limited impact on the overall
+portfolio. The core idea is that different assets do not always move in the
+same direction at the same time. When one investment performs poorly,
+another may perform well, which reduces the overall volatility of the
+portfolio.
+
+Diversification does not eliminate risk entirely. It primarily reduces
+unsystematic risk, also called specific risk, which is the risk associated
+with a single company or sector, such as a product recall, management
+scandal, or sector-specific regulation change. It does not protect against
+systematic risk, also called market risk, which affects nearly all
+investments at the same time, such as a broad economic recession.
+
+A well-diversified portfolio typically includes a mix of asset classes
+(stocks, bonds, ETFs, cash, and sometimes commodities or real estate),
+multiple sectors (technology, banking, energy, healthcare, and so on), and
+sometimes multiple geographies (domestic and international markets).
+
+A common warning sign of poor diversification is concentration risk, where
+a large percentage of the portfolio is invested in a single stock or
+sector. If one sector represents an unusually large share of a portfolio,
+a downturn in that sector can significantly harm the investor's overall
+returns.
+
+Investors should periodically review their asset allocation and rebalance
+their portfolio to maintain their desired level of diversification, since
+some holdings will grow faster than others over time.

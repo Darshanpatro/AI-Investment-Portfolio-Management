@@ -1,0 +1,31 @@
+Title: Asset Allocation
+
+Asset allocation is the process of dividing an investment portfolio among
+different asset categories, such as stocks, bonds, cash, and alternative
+investments like real estate or commodities. The allocation an investor
+chooses is one of the most important decisions in portfolio management,
+because different asset classes carry different levels of risk and return
+potential, and they often respond differently to the same economic
+conditions.
+
+There is no single "correct" asset allocation. The right mix depends on
+factors such as the investor's time horizon, financial goals, risk
+tolerance, and current life stage. A young investor with a long time
+horizon before retirement can typically afford to take on more risk by
+allocating a larger share of their portfolio to equities (stocks), since
+they have more time to recover from short-term market downturns. An
+investor nearing retirement often shifts toward a larger allocation of
+bonds and cash to preserve capital and reduce volatility.
+
+Asset allocation percentage for a given asset is generally calculated as:
+(value of the asset / total portfolio value) x 100.
+
+Over time, as different assets grow at different rates, a portfolio's
+actual allocation will drift away from its target allocation. This is why
+investors periodically rebalance their portfolios, buying or selling assets
+to bring the allocation back in line with their intended targets.
+
+Asset allocation is closely related to, but distinct from, diversification.
+Asset allocation is about deciding how much to put into each category,
+while diversification is about spreading investments within and across
+those categories to reduce concentrated risk.

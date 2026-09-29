@@ -1,0 +1,204 @@
+:root {
+  --navy: #0f2545;
+  --navy-light: #16305c;
+  --accent: #2f7ee6;
+  --green: #1b9e6b;
+  --red: #d64545;
+  --amber: #d68f1f;
+  --bg: #f4f6fb;
+  --card-border: #e6eaf2;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  background: var(--bg);
+  font-family: "Segoe UI", Roboto, Arial, sans-serif;
+  color: #1c2536;
+}
+
+.auth-wrapper {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+}
+
+.auth-card {
+  background: #fff;
+  border-radius: 14px;
+  padding: 2.5rem;
+  width: 100%;
+  max-width: 420px;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.25);
+}
+
+.auth-brand {
+  font-weight: 700;
+  font-size: 1.4rem;
+  color: var(--navy);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.app-shell { display: flex; min-height: 100vh; }
+
+.sidebar {
+  width: 240px;
+  background: var(--navy);
+  color: #cfd9ec;
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0; bottom: 0; left: 0;
+  padding: 1.25rem 0;
+}
+
+.sidebar-brand {
+  color: #fff;
+  font-weight: 700;
+  font-size: 1.1rem;
+  padding: 0 1.25rem 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  margin-bottom: 0.5rem;
+}
+
+.sidebar-nav { flex: 1; overflow-y: auto; }
+
+.sidebar-nav .nav-link {
+  color: #b9c6e0;
+  padding: 0.65rem 1.25rem;
+  border-left: 3px solid transparent;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.92rem;
+}
+
+.sidebar-nav .nav-link i { width: 18px; }
+
+.sidebar-nav .nav-link:hover {
+  background: rgba(255,255,255,0.06);
+  color: #fff;
+}
+
+.sidebar-nav .nav-link.active {
+  background: rgba(47,126,230,0.18);
+  border-left-color: var(--accent);
+  color: #fff;
+  font-weight: 600;
+}
+
+.sidebar-user {
+  padding: 1rem 1.25rem 0;
+  border-top: 1px solid rgba(255,255,255,0.08);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  color: #9fb0d0;
+}
+
+.main-content {
+  margin-left: 240px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.topbar {
+  background: #fff;
+  padding: 0.9rem 1.75rem;
+  border-bottom: 1px solid var(--card-border);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.disclaimer-pill {
+  font-size: 0.75rem;
+  background: #fff5e6;
+  color: #8a5a00;
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+  border: 1px solid #f0dcb0;
+}
+
+.content-body { padding: 1.75rem; }
+
+.metric-card {
+  background: #fff;
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  padding: 1.25rem;
+  height: 100%;
+}
+
+.metric-card .metric-label { font-size: 0.8rem; color: #6b7690; text-transform: uppercase; letter-spacing: 0.03em; }
+.metric-card .metric-value { font-size: 1.6rem; font-weight: 700; margin-top: 0.25rem; }
+.metric-card .metric-icon { font-size: 1.4rem; opacity: 0.5; }
+
+.card-panel {
+  background: #fff;
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  padding: 1.25rem;
+}
+
+.text-profit { color: var(--green); }
+.text-loss { color: var(--red); }
+
+.badge-severity-info { background: #e7f1ff; color: #1857a8; }
+.badge-severity-warning { background: #fff3cd; color: #8a5a00; }
+.badge-severity-critical { background: #fde2e1; color: #a12622; }
+
+.chat-window {
+  height: 480px;
+  overflow-y: auto;
+  background: #fbfcff;
+  border: 1px solid var(--card-border);
+  border-radius: 10px;
+  padding: 1rem;
+}
+
+.chat-bubble-user {
+  background: var(--accent);
+  color: #fff;
+  border-radius: 14px 14px 2px 14px;
+  padding: 0.6rem 1rem;
+  max-width: 75%;
+  margin-left: auto;
+  margin-bottom: 0.75rem;
+  white-space: pre-wrap;
+}
+
+.chat-bubble-ai {
+  background: #eef1f8;
+  color: #1c2536;
+  border-radius: 14px 14px 14px 2px;
+  padding: 0.6rem 1rem;
+  max-width: 80%;
+  margin-bottom: 0.75rem;
+  white-space: pre-wrap;
+}
+
+.route-tag {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #6b7690;
+  margin-bottom: 0.2rem;
+}
+
+.source-badge { font-size: 0.7rem; }
+
+@media (max-width: 900px) {
+  .sidebar { display: none; }
+  .main-content { margin-left: 0; }
+}
